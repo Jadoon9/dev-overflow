@@ -91,6 +91,10 @@ body {
   --background-image-auth-dark: url("/images/auth-dark.png");
   --background-image-auth-light: url("/images/auth-light.png");
 
+  /* Background Image Utilities */
+  --bg-auth-light: var(--background-image-auth-light);
+  --bg-auth-dark: var(--background-image-auth-dark);
+
   --breakpoint-xs: 420px;
 
   --font-inter: var(--font-inter);
@@ -647,5 +651,15 @@ code {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .bg-auth-light {
+    background-image: var(--bg-auth-light);
+  }
+
+  .bg-auth-dark {
+    background-image: var(--bg-auth-dark);
   }
 }

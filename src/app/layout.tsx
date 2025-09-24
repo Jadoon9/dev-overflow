@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/navigation/navbar/page";
 import { ThemeProvider } from "@/components/theme-provider";
 
 // Inter
@@ -39,7 +38,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
           <div>{children}</div>
         </ThemeProvider>
       </body>
