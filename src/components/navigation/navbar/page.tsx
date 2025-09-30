@@ -7,6 +7,7 @@ import Theme from "./Theme";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import routes from "@/constants/routes";
+import MobileNavbar from "./MobileNavbar";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -42,7 +43,10 @@ const Navbar = () => {
             </Button>
           </Link>
         )}
-        <Theme />
+        <div className="flex-between gap-5">
+          <Theme />
+          <MobileNavbar />
+        </div>
       </div>
     </nav>
   );

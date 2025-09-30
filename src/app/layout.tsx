@@ -44,9 +44,9 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <ToastProvider />
             <div>{children}</div>
           </ThemeProvider>
+          <ToastProvider />
         </AuthProvider>
       </body>
     </html>
