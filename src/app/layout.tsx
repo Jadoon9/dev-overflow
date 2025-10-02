@@ -12,6 +12,9 @@ const inter = localFont({
   src: "./fonts/InterVTF.ttf",
   variable: "--font-inter",
   weight: "100 200 300 400 500 600 700 800 900",
+  display: "swap",
+  fallback: ["Inter", "system-ui", "sans-serif"],
+  style: "normal",
 });
 
 // Space Grotesk
@@ -19,6 +22,9 @@ const spaceGrotesk = localFont({
   src: "./fonts/SpaceGroteskVTF.ttf",
   variable: "--font-space-grotesk",
   weight: "100 200 300 400 500 600 700 800 900",
+  display: "swap",
+  fallback: ["Space Grotesk", "system-ui", "sans-serif"],
+  style: "normal",
 });
 
 export const metadata: Metadata = {

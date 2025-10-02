@@ -3,9 +3,55 @@ import { auth, signOut } from "../auth";
 import Link from "next/link";
 import ROUTES from "@/constants/routes";
 import LocalSearch from "@/components/search/LocalSearch";
+import HomeFilter from "@/components/filters/HomeFilters";
+import QuestionCard from "@/components/cards/QuestionCard";
+
 export default async function Home() {
   const session = await auth();
   console.log(session);
+
+  const questions = [
+    {
+      _id: "1",
+      title: "What is the best way to learn React?",
+      content:
+        "I want to learn React and I want to know the best way to learn it.",
+      tags: [
+        { _id: "1", name: "React" },
+        { _id: "2", name: "JavaScript" },
+      ],
+      author: {
+        _id: "1",
+        name: "John Doe",
+        image: "https://via.placeholder.com/150",
+      },
+      createdAt: new Date(),
+      upvotes: 10,
+      downvotes: 2,
+      answers: 10,
+      views: 10,
+    },
+    {
+      _id: "2",
+      title: "What is the best way to learn React?",
+      content:
+        "I want to learn React and I want to know the best way to learn it.",
+      tags: [
+        { _id: "1", name: "React" },
+        { _id: "2", name: "JavaScript" },
+      ],
+      author: {
+        _id: "1",
+        name: "John Doe",
+        image: "https://via.placeholder.com/150",
+      },
+      createdAt: new Date(),
+      upvotes: 10,
+      downvotes: 2,
+      answers: 10,
+      views: 10,
+    },
+  ];
 
   return (
     <>
@@ -26,9 +72,11 @@ export default async function Home() {
           placeholder="Search for questions"
         />
       </section>
-      home filters
+      <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6 ">
-        <p>Question Card</p>
+        {questions.map((question) => (
+          <QuestionCard key={question._id} question={question} />
+        ))}
       </div>
     </>
   );

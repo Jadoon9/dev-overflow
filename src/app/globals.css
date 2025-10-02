@@ -48,10 +48,12 @@
 
 * {
   font-family: var(--font-inter), "Inter", sans-serif;
+  font-style: normal;
 }
 
 body {
   font-family: var(--font-inter), "Inter", sans-serif;
+  font-style: normal;
 }
 
 @theme {
