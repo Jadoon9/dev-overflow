@@ -20,7 +20,11 @@ export default async function Home() {
         </Button>
       </section>
       <section className="mt-11">
-        <LocalSearch />
+        <LocalSearch
+          route="/"
+          imgSrc="/icons/search.svg"
+          placeholder="Search for questions"
+        />
       </section>
       home filters
       <div className="mt-10 flex w-full flex-col gap-6 ">
