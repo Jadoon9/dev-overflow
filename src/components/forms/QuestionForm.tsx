@@ -27,6 +27,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { toast } from "react-toastify";
+import { Question } from "@/types/global";
 
 const Editor = dynamic(() => import("@/components/editor/index"), {
   ssr: false,

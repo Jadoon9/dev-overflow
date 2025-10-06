@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 type ActionResponse<T = null> = {
   success: boolean;
   data?: T;
