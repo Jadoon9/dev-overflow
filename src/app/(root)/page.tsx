@@ -5,7 +5,7 @@ import ROUTES from "@/constants/routes";
 import LocalSearch from "@/components/search/LocalSearch";
 import HomeFilter from "@/components/filters/HomeFilters";
 import QuestionCard from "@/components/cards/QuestionCard";
-
+import handleError from "@/lib/handlers/error";
 export default async function Home() {
   const session = await auth();
   console.log(session);
