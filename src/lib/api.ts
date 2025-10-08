@@ -8,7 +8,7 @@ import { APIResponse } from "@/types/global";
 export const api = {
   auth: {
     oAuthSignIn: ({ user, provider, providerAccountId }: any) =>
-      fetchHandler(`/auth/signin-with-oauth`, {
+      fetchHandler("/auth/signin-with-oauth", {
         method: "POST",
         data: { user, provider, providerAccountId },
       }),
