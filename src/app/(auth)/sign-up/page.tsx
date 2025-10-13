@@ -1,6 +1,7 @@
 "use client";
 import AuthForm from "@/components/forms/AuthForm";
 import { SignUpSchema } from "@/lib/validations";
+import { signUpWithCredentials } from "@/lib/actions/auth.action";
 import React from "react";
 
 const SignUp = () => {
@@ -10,10 +11,12 @@ const SignUp = () => {
     email: "",
     password: "",
   };
+
   const onSubmit = async (data: typeof defaultValues) => {
-    console.log(data);
-    return { success: true };
+    const result = await signUpWithCredentials(data);
+    return result;
   };
+
   return (
     <div>
       <AuthForm

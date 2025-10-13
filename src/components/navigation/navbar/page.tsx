@@ -1,52 +1,45 @@
-"use client";
-
-import Link from "next/link";
 import Image from "next/image";
-import React from "react";
+import Link from "next/link";
+
+import { auth } from "@/app/auth";
+
+import UserAvatar from "@/components/navigation/UserAvatar";
+import ROUTES from "@/constants/routes";
+
+import MobileNavigation from "./MobileNavbar";
 import Theme from "./Theme";
-import { useSession, signOut } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import routes from "@/constants/routes";
-import MobileNavbar from "./MobileNavbar";
 
-const Navbar = () => {
-  const { data: session } = useSession();
-
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: routes.SIGN_IN });
-  };
+const Navbar = async () => {
+  const session = await auth();
 
   return (
     <nav className="flex-between background-light900_dark200 fixed z-50 w-full gap-5  p-6 shadow-light-300 dark:shadow-none sm:px-12">
-      {" "}
-      <Link href="/" className="flex items-center gap-1">
-        <Image src="/images/site-logo.svg" alt="logo" width={23} height={23} />
+      <Link href={ROUTES.HOME} className="flex items-center gap-1">
+        <Image
+          src="/images/site-logo.svg"
+          width={23}
+          height={23}
+          alt="Dev Overflow Logo"
+        />
+
         <p className="h2-bold font-space-grotesk text-dark-100 dark:text-light-900 max-sm:hidden">
           Dev<span className="text-primary-500">Overflow</span>
         </p>
       </Link>
-      <p>Global Search</p>
+
+      {/* <GlobalSearch/> */}
+
       <div className="flex-between gap-5">
-        {session ? (
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              {session.user?.name}
-            </span>
-            <Button onClick={handleLogout} variant="outline" size="sm">
-              Sign Out
-            </Button>
-          </div>
-        ) : (
-          <Link href="/sign-in">
-            <Button variant="outline" size="sm">
-              Sign In
-            </Button>
-          </Link>
+        <Theme />
+        {session?.user?.id && (
+          <UserAvatar
+            id={session.user.id}
+            name={session.user.name!}
+            imageUrl={session.user?.image}
+          />
         )}
-        <div className="flex-between gap-5">
-          <Theme />
-          <MobileNavbar />
-        </div>
+
+        <MobileNavigation />
       </div>
     </nav>
   );

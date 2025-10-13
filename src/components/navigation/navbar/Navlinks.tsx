@@ -1,31 +1,39 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { sidebarLinks } from "@/constants";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+
 import { SheetClose } from "@/components/ui/sheet";
+import { sidebarLinks } from "@/constants";
+import { cn } from "@/lib/utils";
 
-const NavLinks = ({ isMobileNav }: { isMobileNav: boolean }) => {
+const NavLinks = ({
+  isMobileNav = false,
+  userId,
+}: {
+  isMobileNav?: boolean;
+  userId?: string;
+}) => {
   const pathname = usePathname();
-  const userId = 1;
-  return (
-    <div>
-      {sidebarLinks.map((link) => {
-        const isActive =
-          (pathname.includes(link.route) && link.route.length > 1) ||
-          pathname === link.route;
 
-        if (link.route === "/profile") {
-          if (userId) link.route = `${link.route}/${userId}`;
+  return (
+    <>
+      {sidebarLinks.map((item) => {
+        const isActive =
+          (pathname.includes(item.route) && item.route.length > 1) ||
+          pathname === item.route;
+
+        if (item.route === "/profile") {
+          if (userId) item.route = `${item.route}/${userId}`;
           else return null;
         }
+
         const LinkComponent = (
           <Link
-            key={link.id}
-            href={link.route}
+            href={item.route}
+            key={item.label}
             className={cn(
               isActive
                 ? "primary-gradient rounded-lg text-light-900"
@@ -34,11 +42,11 @@ const NavLinks = ({ isMobileNav }: { isMobileNav: boolean }) => {
             )}
           >
             <Image
-              src={link.imgURL}
-              alt={link.label}
+              src={item.imgURL}
+              alt={item.label}
               width={20}
               height={20}
-              className={cn({ "!invert-colors": !isActive })}
+              className={cn({ "invert-colors": !isActive })}
             />
             <p
               className={cn(
@@ -46,19 +54,20 @@ const NavLinks = ({ isMobileNav }: { isMobileNav: boolean }) => {
                 !isMobileNav && "max-lg:hidden"
               )}
             >
-              {link.label}
+              {item.label}
             </p>
           </Link>
         );
+
         return isMobileNav ? (
-          <SheetClose asChild key={link.id}>
+          <SheetClose asChild key={item.route}>
             {LinkComponent}
           </SheetClose>
         ) : (
-          <React.Fragment key={link.id}>{LinkComponent}</React.Fragment>
+          <React.Fragment key={item.route}>{LinkComponent}</React.Fragment>
         );
       })}
-    </div>
+    </>
   );
 };
 

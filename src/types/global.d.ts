@@ -39,6 +39,13 @@ interface Author {
   image: string;
 }
 
+interface AuthCredentials {
+  email: string;
+  password: string;
+  name: string;
+  username: string;
+}
+
 interface Question {
   _id: string;
   title: string;

@@ -1,46 +1,77 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import routes from "@/constants/routes";
 import { signIn } from "next-auth/react";
+
 const SocialAuthForm = () => {
+  const [isLoading, setIsLoading] = useState<string | null>(null);
+
   const buttonClass =
     "background-dark400_light900 body-medium text-dark200_light800 rounded-2 min-h-12 flex-1 px-4 py-3";
 
   const handleSignIn = async (provider: "github" | "google") => {
     try {
+      setIsLoading(provider);
       await signIn(provider, {
         callbackUrl: routes.HOME,
         redirect: true,
       });
     } catch (error) {
       toast.error("Sign in failed. Please try again.");
+      setIsLoading(null);
     }
   };
 
   return (
     <div className="mt-10 flex flex-wrap gap-2.5">
-      <Button className={buttonClass} onClick={() => handleSignIn("github")}>
-        <Image
-          src="/icons/github.svg"
-          alt="github"
-          width={20}
-          height={20}
-          className="object-contain invert-colors mr-2.5"
-        />
-        <span>Continue with GitHub</span>
+      <Button
+        className={buttonClass}
+        onClick={() => handleSignIn("github")}
+        disabled={isLoading !== null}
+      >
+        {isLoading === "github" ? (
+          <>
+            <span className="inline-block animate-spin mr-2">⏳</span>
+            <span>Signing in...</span>
+          </>
+        ) : (
+          <>
+            <Image
+              src="/icons/github.svg"
+              alt="github"
+              width={20}
+              height={20}
+              className="object-contain invert-colors mr-2.5"
+            />
+            <span>Continue with GitHub</span>
+          </>
+        )}
       </Button>
-      <Button className={buttonClass} onClick={() => handleSignIn("google")}>
-        <Image
-          src="/icons/google.svg"
-          alt="github"
-          width={20}
-          height={20}
-          className="object-contain mr-2.5"
-        />
-        <span>Continue with Google</span>
+      <Button
+        className={buttonClass}
+        onClick={() => handleSignIn("google")}
+        disabled={isLoading !== null}
+      >
+        {isLoading === "google" ? (
+          <>
+            <span className="inline-block animate-spin mr-2">⏳</span>
+            <span>Signing in...</span>
+          </>
+        ) : (
+          <>
+            <Image
+              src="/icons/google.svg"
+              alt="google"
+              width={20}
+              height={20}
+              className="object-contain mr-2.5"
+            />
+            <span>Continue with Google</span>
+          </>
+        )}
       </Button>
     </div>
   );

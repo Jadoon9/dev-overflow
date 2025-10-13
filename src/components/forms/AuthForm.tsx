@@ -11,8 +11,11 @@ import {
   useForm,
 } from "react-hook-form";
 import { z, ZodType } from "zod";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import type { ActionResponse } from "@/types/global";
 import {
   Form,
   FormControl,
@@ -27,7 +30,7 @@ import ROUTES from "@/constants/routes";
 interface AuthFormProps<T extends FieldValues> {
   schema: ZodType<T>;
   defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean }>;
+  onSubmit: (data: T) => Promise<ActionResponse>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
@@ -37,13 +40,28 @@ const AuthForm = <T extends FieldValues>({
   formType,
   onSubmit,
 }: AuthFormProps<T>) => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof schema>>({
     resolver: standardSchemaResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
-  const handleSubmit: SubmitHandler<T> = async () => {
-    // TODO: Authenticate User
+  const handleSubmit: SubmitHandler<T> = async (data) => {
+    try {
+      const result = await onSubmit(data);
+
+      if (result.success) {
+        toast.success(
+          `${formType === "SIGN_IN" ? "Signed in" : "Signed up"} successfully!`
+        );
+        router.push(ROUTES.HOME);
+      } else {
+        toast.error(result.error?.message || "Something went wrong");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+      console.error(error);
+    }
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
@@ -84,11 +102,14 @@ const AuthForm = <T extends FieldValues>({
           disabled={form.formState.isSubmitting}
           className="primary-gradient paragraph-medium min-h-12 w-full rounded-2 px-4 py-3 font-inter !text-light-900"
         >
-          {form.formState.isSubmitting
-            ? buttonText === "Sign In"
-              ? "Signin In..."
-              : "Signing Up..."
-            : buttonText}
+          {form.formState.isSubmitting ? (
+            <>
+              <span className="inline-block animate-spin mr-2">⏳</span>
+              {buttonText === "Sign In" ? "Signing In..." : "Signing Up..."}
+            </>
+          ) : (
+            buttonText
+          )}
         </Button>
 
         {formType === "SIGN_IN" ? (
