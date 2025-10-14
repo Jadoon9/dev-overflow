@@ -1,83 +1,83 @@
-import { Button } from "@/components/ui/button";
-import { auth, signOut } from "../auth";
+import { Metadata } from "next";
 import Link from "next/link";
-import ROUTES from "@/constants/routes";
-import LocalSearch from "@/components/search/LocalSearch";
-import HomeFilter from "@/components/filters/HomeFilters";
-import QuestionCard from "@/components/cards/QuestionCard";
-import handleError from "@/lib/handlers/error";
-export default async function Home() {
-  const session = await auth();
-  console.log(session);
 
-  const questions = [
-    {
-      _id: "1",
-      title: "What is the best way to learn React?",
-      content:
-        "I want to learn React and I want to know the best way to learn it.",
-      tags: [
-        { _id: "1", name: "React" },
-        { _id: "2", name: "JavaScript" },
-      ],
-      author: {
-        _id: "1",
-        name: "John Doe",
-        image: "https://via.placeholder.com/150",
-      },
-      createdAt: new Date(),
-      upvotes: 10,
-      downvotes: 2,
-      answers: 10,
-      views: 10,
-    },
-    {
-      _id: "2",
-      title: "What is the best way to learn React?",
-      content:
-        "I want to learn React and I want to know the best way to learn it.",
-      tags: [
-        { _id: "1", name: "React" },
-        { _id: "2", name: "JavaScript" },
-      ],
-      author: {
-        _id: "1",
-        name: "John Doe",
-        image: "https://via.placeholder.com/150",
-      },
-      createdAt: new Date(),
-      upvotes: 10,
-      downvotes: 2,
-      answers: 10,
-      views: 10,
-    },
-  ];
+import QuestionCard from "@/components/cards/QuestionCard";
+
+import LocalSearch from "@/components/search/LocalSearch";
+import { Button } from "@/components/ui/button";
+import ROUTES from "@/constants/routes";
+import { getQuestions } from "@/lib/actions/questions.action";
+import { RouteParams } from "@/types/global";
+import DataRenderer from "@/components/DataRenderer";
+import { EMPTY_QUESTION } from "@/constants/states";
+
+export const metadata: Metadata = {
+  title: "Dev Overflow | Home",
+  description:
+    "Discover different programming questions and answers with recommendations from the community.",
+};
+
+async function Home({ searchParams }: RouteParams) {
+  const { page, pageSize, query, filter } = await searchParams;
+
+  const { success, data, error } = await getQuestions({
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    query,
+    filter,
+  });
+
+  const { questions, isNext } = data || {};
 
   return (
     <>
-      <section className="flex w-full flex-col-reverse justify-between pag-4 sm:flex-row text-dark-100_light900">
-        <h1 className="h1-bold text-dark-100_light900">All Questions</h1>
-
+      <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
+        <h1 className="h1-bold text-dark100_light900">All Questions</h1>
         <Button
-          className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900 "
+          className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900"
           asChild
         >
-          <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
+          <Link href={ROUTES.ASK_QUESTION} className="max-sm:w-full">
+            Ask a Question
+          </Link>
         </Button>
       </section>
-      <section className="mt-11">
+
+      <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
-          route="/"
+          route={ROUTES.HOME}
           imgSrc="/icons/search.svg"
-          placeholder="Search for questions"
+          placeholder="Search questions..."
+          iconPosition="left"
+          otherClasses="flex-1"
         />
+
+        {/* <CommonFilter
+          filters={HomePageFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
+          containerClasses="hidden max-md:flex"
+        /> */}
       </section>
-      <HomeFilter />
-      <div className="mt-10 flex w-full flex-col gap-6 ">
-        {questions.map((question) => (
-          <QuestionCard key={question._id} question={question} />
-        ))}
-      </div>
+
+      {/* <HomeFilter /> */}
+
+      <DataRenderer
+        success={success}
+        error={error}
+        data={questions}
+        empty={EMPTY_QUESTION}
+        render={(questions) => (
+          <div className="mt-10 flex w-full flex-col gap-6">
+            {questions.map((question) => (
+              <QuestionCard key={question._id} question={question} />
+            ))}
+          </div>
+        )}
+      />
+
+      {/* <Pagination page={page} isNext={isNext || false} /> */}
     </>
   );
 }
+
+export default Home;

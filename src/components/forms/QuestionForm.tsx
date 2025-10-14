@@ -10,8 +10,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import ROUTES from "@/constants/routes";
-
-// import { createQuestion, editQuestion } from "@/lib/actions/question.action";
+import { toast } from "react-toastify";
+import { createQuestion, editQuestion } from "@/lib/actions/questions.action";
 import { AskQuestionSchema } from "@/lib/validations";
 
 import TagCard from "../cards/TagCard";
@@ -26,10 +26,9 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { toast } from "react-toastify";
 import { Question } from "@/types/global";
 
-const Editor = dynamic(() => import("@/components/editor/index"), {
+const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
@@ -94,7 +93,38 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
 
   const handleCreateQuestion = async (
     data: z.infer<typeof AskQuestionSchema>
-  ) => {};
+  ) => {
+    startTransition(async () => {
+      if (isEdit && question) {
+        const result = await editQuestion({
+          questionId: question?._id,
+          ...data,
+        });
+
+        if (result.success) {
+          toast.success("Question updated successfully");
+
+          if (result.data)
+            router.push(ROUTES.QUESTION(result?.data?._id as string));
+        } else {
+          toast.error(`Error ${result.status}`);
+        }
+
+        return;
+      }
+
+      const result = await createQuestion(data);
+
+      if (result.success) {
+        toast.success("Question created successfully");
+
+        if (result.data)
+          router.push(ROUTES.QUESTION(result?.data?._id as string));
+      } else {
+        toast.error(`Error ${result.status}`);
+      }
+    });
+  };
 
   return (
     <Form {...form}>

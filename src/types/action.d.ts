@@ -1,56 +1,141 @@
-"use server";
-
-import { Session } from "next-auth";
-import { ZodError, ZodSchema } from "zod";
-
-import { auth } from "@/auth";
-
-import { UnauthorizedError, ValidationError } from "../http-errors";
-import connectDB from "@/lib/mongodb";
-
-type ActionOptions<T> = {
-  params?: T;
-  schema?: ZodSchema<T>;
-  authorize?: boolean;
-};
-
-// 1. Checking whether the schema and params are provided and validated.
-// 2. Checking whether the user is authorized.
-// 3. Connecting to the database.
-// 4. Returning the params and session.
-
-async function action<T>({
-  params,
-  schema,
-  authorize = false,
-}: ActionOptions<T>) {
-  if (schema && params) {
-    try {
-      schema.parse(params);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return new ValidationError(
-          error.flatten().fieldErrors as Record<string, string[]>
-        );
-      } else {
-        return new Error("Schema validation failed");
-      }
-    }
-  }
-
-  let session: Session | null = null;
-
-  if (authorize) {
-    session = await auth();
-
-    if (!session) {
-      return new UnauthorizedError();
-    }
-  }
-
-  await connectDB();
-
-  return { params, session };
+interface SignInWithOAuthParams {
+  provider: "github" | "google";
+  providerAccountId: string;
+  user: {
+    name: string;
+    username: string;
+    email: string;
+    image: string;
+  };
 }
 
-export default action;
+interface AuthCredentials {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface CreateQuestionParams {
+  title: string;
+  content: string;
+  tags: string[];
+}
+
+interface EditQuestionParams extends CreateQuestionParams {
+  questionId: string;
+}
+
+interface GetQuestionParams {
+  questionId: string;
+}
+
+interface GetTagQuestionsParams extends Omit<PaginatedSearchParams, "filter"> {
+  tagId: string;
+}
+
+interface IncrementViewsParams {
+  questionId: string;
+}
+
+interface CreateAnswerParams {
+  content: string;
+  questionId: string;
+}
+
+interface GetAnswersParams extends PaginatedSearchParams {
+  questionId: string;
+}
+
+interface CreateVoteParams {
+  targetId: string;
+  targetType: "question" | "answer";
+  voteType: "upvote" | "downvote";
+}
+
+interface UpdateVoteCountParams extends CreateVoteParams {
+  change: 1 | -1;
+}
+
+type HasVotedParams = Pick<CreateVoteParams, "targetId" | "targetType">;
+
+interface HasVotedResponse {
+  hasUpvoted: boolean;
+  hasDownvoted: boolean;
+}
+
+interface CollectionBaseParams {
+  questionId: string;
+}
+
+interface GetUserParams {
+  userId: string;
+}
+
+interface GetUserQuestionsParams
+  extends Omit<PaginatedSearchParams, "query | filter | sort"> {
+  userId: string;
+}
+
+interface GetUserAnswersParams extends PaginatedSearchParams {
+  userId: string;
+}
+
+interface GetUserTagsParams {
+  userId: string;
+}
+
+interface DeleteQuestionParams {
+  questionId: string;
+}
+
+interface DeleteAnswerParams {
+  answerId: string;
+}
+
+interface CreateInteractionParams {
+  action:
+    | "view"
+    | "upvote"
+    | "downvote"
+    | "bookmark"
+    | "post"
+    | "edit"
+    | "delete"
+    | "search";
+  actionId: string;
+  authorId: string;
+  actionTarget: "question" | "answer";
+}
+
+interface UpdateReputationParams {
+  interaction: IInteractionDoc;
+  session: mongoose.ClientSession;
+  performerId: string;
+  authorId: string;
+}
+
+interface RecommendationParams {
+  userId: string;
+  query?: string;
+  skip: number;
+  limit: number;
+}
+
+interface JobFilterParams {
+  query: string;
+  page: string;
+}
+
+interface UpdateUserParams {
+  name?: string;
+  username?: string;
+  email?: string;
+  image?: string;
+  password?: string;
+}
+
+interface GlobalSearchParams {
+  query: string;
+  type: string | null;
+}

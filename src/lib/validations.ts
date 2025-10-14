@@ -1,10 +1,10 @@
-// /lib/validations.ts
 import { z } from "zod";
 
 export const SignInSchema = z.object({
   email: z
-    .email({ message: "Please provide a valid email address." })
-    .min(1, { message: "Email is required." }),
+    .string()
+    .min(1, { message: "Email is required." })
+    .email({ message: "Please provide a valid email address." }),
 
   password: z
     .string()

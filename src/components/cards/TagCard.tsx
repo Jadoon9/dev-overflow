@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 import ROUTES from "@/constants/routes";
-import { cn, getDevIconsClassName } from "@/lib/utils";
+import { cn, getDeviconClassName } from "@/lib/utils";
 
 import { Badge } from "../ui/badge";
 
@@ -28,7 +28,7 @@ const TagCard = ({
   isButton,
   handleRemove,
 }: Props) => {
-  const iconClass = getDevIconsClassName(name);
+  const iconClass = getDeviconClassName(name);
   const iconDescription = "";
 
   const handleClick = (e: React.MouseEvent) => {
