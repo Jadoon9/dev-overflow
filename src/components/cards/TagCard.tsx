@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 import ROUTES from "@/constants/routes";
-import { cn, getDeviconClassName } from "@/lib/utils";
+import { cn, getDeviconClassName, getTechDescription } from "@/lib/utils";
 
 import { Badge } from "../ui/badge";
 
@@ -29,7 +29,7 @@ const TagCard = ({
   handleRemove,
 }: Props) => {
   const iconClass = getDeviconClassName(name);
-  const iconDescription = "";
+  const iconDescription = getTechDescription(name);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
